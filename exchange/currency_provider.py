@@ -121,10 +121,9 @@ class VkurseProvider(ProviderBase):
 
         currency_from_code = self.iso_from_country_code[self.currency_from]
 
-        for c in json_data:
-            dollar_buy = c[currency_from_code]["buy"]
-            dollar_sale = c[currency_from_code]["sale"]
-            return SellBuy(buy=float(dollar_buy), sell=float(dollar_sale))
+        for currency in json_data:
+            if currency[0] == currency_from_code:
+                return SellBuy(buy=float(currency[1]["buy"]), sell=float(currency[1]["sale"]))
 
 
 PROVIDERS = [MonoProvider, PrivatbankProvider, NBUProvider, VkurseProvider]
