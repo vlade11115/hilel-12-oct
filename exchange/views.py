@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -24,18 +26,44 @@ def main_view(request):
 
 
 def calculator(request):
-    #  Використовувати валюти з БД, з кращим курсом для користувача.
+    today = datetime.now().date()
 
-    if request.method == 'GET':
+    if request.method == "GET":
         form = CalculatorForm()
-        data = {'form': form}
-        return render(request, 'exchange/calculator.html', data)
+        data = {"form": form}
+        return render(request, "exchange/calculator.html", data)
 
     form = CalculatorForm(request.POST)
-    quantity = request.POST['currency_quantity']
-    print(request.POST['currency_from'])
-    print(request.POST['currency_to'])
-    print(request.POST['currency_quantity'])
 
-    data = {'form': form, 'output': 'output'}
-    return render(request, 'exchange/calculator.html', data)
+    quantity = int(request.POST["currency_quantity"])
+    currency_from = request.POST["currency_from"]
+    operation = request.POST["operation"]
+
+    all_providers = []
+    provider_info = (
+        Rate.objects.filter(date=today, currency_from=currency_from)
+        .values("provider", operation)
+        .order_by(operation)
+    )
+    for provider in provider_info:
+        all_providers.append(
+            [provider["provider"], float(provider[operation]) * quantity]
+        )
+
+    best_provider = (
+        Rate.objects.filter(date=today, currency_from=currency_from)
+        .order_by(operation)
+        .first()
+    )
+    if operation == "buy":
+        output = float(best_provider.buy) * quantity
+    else:
+        output = float(best_provider.sell) * quantity
+
+    data = {
+        "form": form,
+        "all_providers": all_providers,
+        "output": output,
+        "today": today,
+    }
+    return render(request, "exchange/calculator.html", data)

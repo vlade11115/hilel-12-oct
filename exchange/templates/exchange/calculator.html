@@ -12,8 +12,13 @@
     {% csrf_token %}
     {{  form.as_p  }}
     {% if output  %}
-        <p>Output: {{  output  }}</p>
+        <p>Best cost: {{  output | floatformat:2 }}</p>
     {%  endif  %}
+    <hr>
+    <p>Other banks</p>
+    {%  for provider, count in all_providers %}
+        {{  provider  }}: {{  count | floatformat:2 }}<br>
+    {%  endfor  %}
     <input type="submit" value="Count">
 </form>
 

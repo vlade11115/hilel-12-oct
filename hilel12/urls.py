@@ -19,4 +19,8 @@ from django.urls import path
 
 from exchange.views import main_view, calculator
 
-urlpatterns = [path("admin/", admin.site.urls), path("exchange-rates", main_view), path("", calculator)]
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("exchange-rates", main_view),
+    path("", calculator),
+]
