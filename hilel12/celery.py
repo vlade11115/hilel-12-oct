@@ -24,9 +24,3 @@ app.conf.beat_schedule = {
     },
 }
 
-# app.conf.beat_schedule = {
-#     "add-every-midnight": {
-#         "task": "exchange.tasks.pull_rate",
-#         "schedule": crontab(minute="0", hour="0"),
-#     },
-# }
