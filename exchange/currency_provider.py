@@ -78,4 +78,60 @@ class PrivatbankProvider(ProviderBase):
         )
 
 
-PROVIDERS = [MonoProvider, PrivatbankProvider]
+class VkurseProvider(ProviderBase):
+    name = "vkurse"
+
+    def get_rate(self) -> SellBuy:
+        url = "https://vkurse.dp.ua/course.json"
+        response = requests.get(url)
+        response.raise_for_status()
+
+        currency_data = response.json()
+
+        if self.currency_from == "EUR":
+            if "Euro" in currency_data:
+                euro_buy = float(currency_data["Euro"]["buy"])
+                euro_sale = float(currency_data["Euro"]["sale"])
+                value = SellBuy(
+                    sell=float(euro_sale),
+                    buy=float(euro_buy)
+                )
+                return value
+        elif self.currency_from == "USD":
+            if "Dollar" in currency_data:
+                dollar_buy = float(currency_data["Dollar"]["buy"])
+                dollar_sale = float(currency_data["Dollar"]["sale"])
+                value = SellBuy(
+                    sell=float(dollar_sale),
+                    buy=float(dollar_buy)
+                )
+                return value
+
+        raise RateNotFound(
+            f"Cannot find rate from {self.currency_from} to {self.currency_to} in provider {self.name}"
+        )
+
+
+class NbuProvider(ProviderBase):
+    name = "nbu"
+
+    def get_rate(self) -> SellBuy:
+        url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
+        response = requests.get(url)
+        response.raise_for_status()
+
+        for currency in response.json():
+            if (
+                    currency["cc"] == self.currency_from
+            ):
+                value = SellBuy(
+                    buy=float(currency["rate"]), sell=float(currency["rate"])
+                )
+                return value
+        raise RateNotFound(
+            f"Cannot find rate from {self.currency_from} to {self.currency_to} in provider {self.name}"
+        )
+
+
+PROVIDERS = [MonoProvider, PrivatbankProvider, VkurseProvider, NbuProvider]
+
