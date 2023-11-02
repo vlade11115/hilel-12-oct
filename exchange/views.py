@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from .models import Rate
 
@@ -19,3 +19,8 @@ def main_view(request):
         ]
     }
     return JsonResponse(response_data)
+
+
+def calculator(request):
+    #  Використовувати валюти з БД, з кращим курсом для користувача.
+    return HttpResponse("")
