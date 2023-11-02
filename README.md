@@ -39,4 +39,6 @@ or on Windows:
 6. Run server:
 ```
 python manage.py runserver  
+or 
+python3 manage.py runserver  
 ```
