@@ -120,10 +120,35 @@ class VkurseProvider(ProviderBase):
         json_data = response.json()
 
         currency_from_code = self.iso_from_country_code[self.currency_from]
+        currency = json_data[currency_from_code]
 
-        for currency in json_data:
-            if currency[0] == currency_from_code:
-                return SellBuy(buy=float(currency[1]["buy"]), sell=float(currency[1]["sale"]))
+        return SellBuy(buy=float(currency["buy"]), sell=float(currency["sale"]))
 
 
-PROVIDERS = [MonoProvider, PrivatbankProvider, NBUProvider, VkurseProvider]
+class MinfinProvider(ProviderBase):
+    name = "midbank"
+
+    iso_from_country_code = {
+        "UAH": "UAH",
+        "USD": "USD",
+        "EUR": "EUR",
+    }
+
+    def get_rate(self) -> SellBuy:
+        url = "https://minfin.com.ua/api/currency/simple/?base=UAH&list=usd,eur"
+        response = requests.get(url)
+        response.raise_for_status()
+        json_data = response.json()
+
+        currency_from_code = self.iso_from_country_code[self.currency_from]
+        currency = json_data["data"][currency_from_code][0]
+
+        for _ in json_data:
+            return SellBuy(buy=float(currency["buy"]["val"]), sell=float(currency["sell"]["val"]))
+
+
+PROVIDERS = [MonoProvider, PrivatbankProvider, NBUProvider, VkurseProvider, MinfinProvider]
+
+if __name__ == "__main__":
+    p = MinfinProvider("USD", "UAH")
+    print(p.get_rate())

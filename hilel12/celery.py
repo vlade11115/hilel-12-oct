@@ -18,8 +18,8 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    "add-every-30-seconds": {
+    "add-every-midnight": {
         "task": "exchange.tasks.pull_rate",
-        "schedule": 30.0,
+        "schedule": crontab(minute="0", hour="0"),
     },
 }
