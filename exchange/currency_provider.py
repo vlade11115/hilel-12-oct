@@ -45,8 +45,8 @@ class MonoProvider(ProviderBase):
 
         for currency in response.json():
             if (
-                    currency["currencyCodeA"] == currency_from_code
-                    and currency["currencyCodeB"] == currency_to_code
+                currency["currencyCodeA"] == currency_from_code
+                and currency["currencyCodeB"] == currency_to_code
             ):
                 value = SellBuy(
                     sell=float(currency["rateSell"]), buy=float(currency["rateBuy"])
@@ -66,8 +66,8 @@ class PrivatbankProvider(ProviderBase):
         response.raise_for_status()
         for currency in response.json():
             if (
-                    currency["ccy"] == self.currency_from
-                    and currency["base_ccy"] == self.currency_to
+                currency["ccy"] == self.currency_from
+                and currency["base_ccy"] == self.currency_to
             ):
                 value = SellBuy(
                     buy=float(currency["buy"]), sell=float(currency["sale"])
@@ -141,13 +141,21 @@ class MinfinProvider(ProviderBase):
         json_data = response.json()
 
         currency_from_code = self.iso_from_country_code[self.currency_from]
-        currency = json_data["data"][currency_from_code][0]
+        currency = json_data["data"][currency_from_code]["midbank"]
 
         for _ in json_data:
-            return SellBuy(buy=float(currency["buy"]["val"]), sell=float(currency["sell"]["val"]))
+            return SellBuy(
+                buy=float(currency["buy"]["val"]), sell=float(currency["sell"]["val"])
+            )
 
 
-PROVIDERS = [MonoProvider, PrivatbankProvider, NBUProvider, VkurseProvider, MinfinProvider]
+PROVIDERS = [
+    MonoProvider,
+    PrivatbankProvider,
+    NBUProvider,
+    VkurseProvider,
+    MinfinProvider,
+]
 
 if __name__ == "__main__":
     p = MinfinProvider("USD", "UAH")
