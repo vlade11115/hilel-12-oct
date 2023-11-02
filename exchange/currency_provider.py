@@ -92,19 +92,13 @@ class VkurseProvider(ProviderBase):
             if "Euro" in currency_data:
                 euro_buy = float(currency_data["Euro"]["buy"])
                 euro_sale = float(currency_data["Euro"]["sale"])
-                value = SellBuy(
-                    sell=float(euro_sale),
-                    buy=float(euro_buy)
-                )
+                value = SellBuy(sell=float(euro_sale), buy=float(euro_buy))
                 return value
         elif self.currency_from == "USD":
             if "Dollar" in currency_data:
                 dollar_buy = float(currency_data["Dollar"]["buy"])
                 dollar_sale = float(currency_data["Dollar"]["sale"])
-                value = SellBuy(
-                    sell=float(dollar_sale),
-                    buy=float(dollar_buy)
-                )
+                value = SellBuy(sell=float(dollar_sale), buy=float(dollar_buy))
                 return value
 
         raise RateNotFound(
@@ -121,9 +115,7 @@ class NbuProvider(ProviderBase):
         response.raise_for_status()
 
         for currency in response.json():
-            if (
-                    currency["cc"] == self.currency_from
-            ):
+            if currency["cc"] == self.currency_from:
                 value = SellBuy(
                     buy=float(currency["rate"]), sell=float(currency["rate"])
                 )
@@ -134,4 +126,3 @@ class NbuProvider(ProviderBase):
 
 
 PROVIDERS = [MonoProvider, PrivatbankProvider, VkurseProvider, NbuProvider]
-

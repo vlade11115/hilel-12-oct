@@ -30,7 +30,7 @@ def currency_exchange_calculator(request):
     rates = Rate.objects.filter(date=datetime.date.today())
 
     if not rates.exists():
-        error = f'База даних порожня обмін не можливий'
+        error = f"База даних порожня обмін не можливий"
         return render(
             request,
             "currency_exchange_calculator.html",
@@ -50,7 +50,10 @@ def currency_exchange_calculator(request):
         suma = form.cleaned_data["suma"]
 
         if currency_sell != "UAH" and currency_buy != "UAH":
-            form.add_error("currency_sell", f"Ми не можемо конвертувати {currency_sell} в {currency_buy}")
+            form.add_error(
+                "currency_sell",
+                f"Ми не можемо конвертувати {currency_sell} в {currency_buy}",
+            )
             return render(
                 request,
                 "currency_exchange_calculator.html",
@@ -73,7 +76,7 @@ def currency_exchange_calculator(request):
                 {"form": form, "rates": rates, "result": result},
             )
 
-        result = calculator_in_ua(rates,  currency_sell, suma)
+        result = calculator_in_ua(rates, currency_sell, suma)
         return render(
             request,
             "currency_exchange_calculator.html",

@@ -57,5 +57,3 @@ def pull_rate():
                 buy=usd_rate.buy,
             )
             print("Created USD exchange rate with ID", usd.id)
-
-
