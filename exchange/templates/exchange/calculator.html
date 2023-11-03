@@ -1,3 +1,10 @@
+{% load bootstrap5 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% bootstrap_messages %}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,7 +17,7 @@
 <body>
 <form method="POST">
     {% csrf_token %}
-    {{  form.as_p  }}
+    {% bootstrap_form form %}
     {% if output  %}
         <p>Best cost: {{  output | floatformat:2 }}</p>
     {%  endif  %}
@@ -19,7 +26,11 @@
     {%  for provider, count in all_providers %}
         {{  provider  }}: {{  count | floatformat:2 }}<br>
     {%  endfor  %}
-    <input type="submit" value="Count">
+      {% buttons %}
+    <button type="submit" class="btn btn-primary" value="Count">
+      Submit
+    </button>
+  {% endbuttons %}
 </form>
 
 </body>
