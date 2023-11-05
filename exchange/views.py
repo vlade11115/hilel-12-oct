@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -22,7 +23,7 @@ def main_view(request):
             for rate in Rate.objects.all()
         ]
     }
-    return JsonResponse(response_data)
+    return render(request, "exchange/rate_list.html", response_data)
 
 
 def calculator(request):
@@ -64,6 +65,6 @@ def calculator(request):
         "form": form,
         "all_providers": all_providers,
         "output": output,
-        "today": today,
     }
+    messages.success(request, message=f'Best price: {output} - {all_providers[0][0]}')
     return render(request, "exchange/calculator.html", data)
