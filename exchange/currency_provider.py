@@ -78,4 +78,74 @@ class PrivatbankProvider(ProviderBase):
         )
 
 
-PROVIDERS = [MonoProvider, PrivatbankProvider]
+class VkurseProvider(ProviderBase):
+    name = "vkurse"
+    rename_currency = {
+        "USD": "Dollar",
+        "EUR": "Euro",
+    }
+
+    def get_rate(self) -> SellBuy:
+        url = "https://vkurse.dp.ua/course.json"
+        response = requests.get(url)
+        response.raise_for_status()
+        json_rate = response.json()
+        for currency in json_rate:
+            a = json_rate[currency]
+
+            if currency == self.rename_currency[self.currency_from]:
+                value = SellBuy(buy=float(a["buy"]), sell=float(a["sale"]))
+                return value
+        raise RateNotFound(
+            f"Cannot find rate from {self.currency_from} to {self.currency_to} in provider {self.name}"
+        )
+
+
+class NBUProvider(ProviderBase):
+    name = "nbu"
+
+    def get_rate(self) -> SellBuy:
+        url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
+        response = requests.get(url)
+        response.raise_for_status()
+
+        for currency in response.json():
+            if currency["cc"] == self.currency_from:
+                value = SellBuy(
+                    buy=float(currency["rate"]), sell=float(currency["rate"])
+                )
+                return value
+        raise RateNotFound(
+            f"Cannot find rate from {self.currency_from} to {self.currency_to} in provider {self.name}"
+        )
+
+
+class MinfinProvider(ProviderBase):
+    name = "minfin"
+    rename_currency = {
+        "USD": "usd",
+        "EUR": "eur",
+    }
+
+    def get_rate(self) -> SellBuy:
+        url = "https://api.minfin.com.ua/mb/2d57c01794142f530091b1330cfbbbf19d4c2dee/"
+
+        response = requests.get(url)
+        response.raise_for_status()
+
+        for currency in response.json():
+            if currency["currency"] == self.rename_currency[self.currency_from]:
+                value = SellBuy(buy=float(currency["ask"]), sell=float(currency["bid"]))
+                return value
+        raise RateNotFound(
+            f"Cannot find rate from {self.currency_from} to {self.currency_to} in provider {self.name}"
+        )
+
+
+PROVIDERS = [
+    MonoProvider,
+    PrivatbankProvider,
+    VkurseProvider,
+    NBUProvider,
+    MinfinProvider,
+]

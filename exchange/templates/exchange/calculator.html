@@ -1,0 +1,36 @@
+{% extends "exchange/base.html" %}
+{% load bootstrap5 %}
+
+{%  block content  %}
+<style>
+form {
+    margin-left: 50px;
+    margin-right: 60px;
+}
+div {
+    margin-right: 45%;
+}
+</style>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <div>
+        {% bootstrap_form form %}
+    </div>
+    {% if output  %}
+        <p>Best price: {{  output | floatformat:2 }}</p>
+    {%  endif  %}
+    <hr>
+    <p>Other banks</p>
+    {%  for provider, count in all_providers %}
+    <ul class="list-group">
+        <li class="list-group-item">{{  provider  }}: {{  count | floatformat:2 }}</li>
+    </ul>
+    {% endfor %}
+    {% buttons %}
+        <button type="submit" class="btn btn-primary" value="Count">
+            Submit
+        </button>
+    {% endbuttons %}
+</form>
+{% endblock %}
