@@ -66,5 +66,5 @@ def calculator(request):
         "all_providers": all_providers,
         "output": output,
     }
-    messages.success(request, message=f'Best price: {output} - {all_providers[0][0]}')
+    messages.success(request, message=f"Best price: {output} - {all_providers[0][0]}")
     return render(request, "exchange/calculator.html", data)
