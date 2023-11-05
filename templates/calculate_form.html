@@ -5,15 +5,26 @@
     <title>Calculate currency</title>
 </head>
 <body>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ currency }}
-        <input type="submit" value="OK">
-    </form>
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
-    {% if best_rate %}
-        <p>Найкращий обмінний курс: {{ best_rate.sell }} від {{ best_rate.provider }}</p>
-    {% endif %}
-    <h3><a href="/exchange-rates/">API</a></h3>
+{% bootstrap_messages %}
+<form action="" method="post" class="form-control form-control-sm">
+    <div class="w-25 mb-2">
+    {% csrf_token %}
+    {% bootstrap_form currency %}
+
+    {% buttons %}
+        <input type="submit" class="btn btn-primary" value="Побачити актуальний курс">
+    {% endbuttons %}
+    </div>
+</form>
+
+{% if best_rate %}
+    <p class="mt-2 p-2">Найкращий обмінний курс: {{ best_rate.sell }} від {{ best_rate.provider }}</p>
+{% endif %}
+<h3 class="position-absolute top-0 end-0 p-3"><a href="/exchange-rates/" target="_blank">API</a></h3>
+
 </body>
 </html>
