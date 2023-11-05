@@ -1,37 +1,36 @@
+{% extends "exchange/base.html" %}
 {% load bootstrap5 %}
 
-{% bootstrap_css %}
-{% bootstrap_javascript %}
+{%  block content  %}
+<style>
+form {
+    margin-left: 50px;
+    margin-right: 60px;
+}
+div {
+    margin-right: 45%;
+}
+</style>
 
-{% bootstrap_messages %}
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Currency calculator</title>
-</head>
-<body>
-<form method="POST">
+<form action="" method="POST">
     {% csrf_token %}
-    {% bootstrap_form form %}
+    <div>
+        {% bootstrap_form form %}
+    </div>
     {% if output  %}
-        <p>Best cost: {{  output | floatformat:2 }}</p>
+        <p>Best price: {{  output | floatformat:2 }}</p>
     {%  endif  %}
     <hr>
     <p>Other banks</p>
     {%  for provider, count in all_providers %}
-        {{  provider  }}: {{  count | floatformat:2 }}<br>
-    {%  endfor  %}
-      {% buttons %}
-    <button type="submit" class="btn btn-primary" value="Count">
-      Submit
-    </button>
-  {% endbuttons %}
+    <ul class="list-group">
+        <li class="list-group-item">{{  provider  }}: {{  count | floatformat:2 }}</li>
+    </ul>
+    {% endfor %}
+    {% buttons %}
+        <button type="submit" class="btn btn-primary" value="Count">
+            Submit
+        </button>
+    {% endbuttons %}
 </form>
-
-</body>
-</html>
+{% endblock %}
