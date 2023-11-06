@@ -18,7 +18,7 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    "add-every-five-minute": {
+    "add-every-ten-minute": {
         "task": "exchange.tasks.pull_rate",
         "schedule": 600,
     },

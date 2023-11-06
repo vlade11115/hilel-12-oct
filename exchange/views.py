@@ -4,8 +4,8 @@ from django.db.models import Max, Min
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Rate
 from .forms import CurrencyExchangeForm
+from .models import Rate
 
 
 def exchange_rates(request):
@@ -30,11 +30,12 @@ def currency_exchange_calculator(request):
     rates = Rate.objects.filter(date=datetime.date.today())
 
     if not rates.exists():
+        form = CurrencyExchangeForm()
         error = f"База даних порожня обмін не можливий"
         return render(
             request,
             "currency_exchange_calculator.html",
-            {"error": error, "rates": rates},
+            {"error": error, "rates": rates, "form": form},
         )
 
     if request.method == "GET":
@@ -49,17 +50,6 @@ def currency_exchange_calculator(request):
         currency_buy = form.cleaned_data["currency_buy"]
         suma = form.cleaned_data["suma"]
 
-        if currency_sell != "UAH" and currency_buy != "UAH":
-            form.add_error(
-                "currency_sell",
-                f"Ми не можемо конвертувати {currency_sell} в {currency_buy}",
-            )
-            return render(
-                request,
-                "currency_exchange_calculator.html",
-                {"form": form, "rates": rates},
-            )
-
         if currency_sell == currency_buy:
             form.add_error("currency_sell", "Неможливо конвертувати однакові валюти!")
             return render(
@@ -68,29 +58,64 @@ def currency_exchange_calculator(request):
                 {"form": form, "rates": rates},
             )
 
-        if currency_sell == "UAH":
-            result = calculator_from_ua(rates, currency_buy, suma)
+        if currency_sell != "UAH" and currency_buy != "UAH":
+            form.add_error(
+                "currency_sell",
+                f"Наш обмінник не може конвертувати {currency_sell} в {currency_buy}",
+            )
             return render(
                 request,
                 "currency_exchange_calculator.html",
-                {"form": form, "rates": rates, "result": result},
+                {"form": form, "rates": rates},
             )
 
-        result = calculator_in_ua(rates, currency_sell, suma)
-        return render(
-            request,
-            "currency_exchange_calculator.html",
-            {"form": form, "rates": rates, "result": result},
-        )
-
-
-def calculator_from_ua(rates, currency_by, suma):
-    rate = rates.filter(currency_from=currency_by).aggregate(Min("sell"))["sell__min"]
-    result = round(float(suma / rate), 2)
-    return f"{result} {currency_by}"
-
-
-def calculator_in_ua(rates, currency_sell, suma):
-    rate = rates.filter(currency_from=currency_sell).aggregate(Max("buy"))["buy__max"]
-    result = round(float(suma * rate), 2)
-    return f"{result} UAH"
+        if currency_sell == "UAH":
+            rate = rates.filter(currency_from=currency_buy).aggregate(Min("sell"))[
+                "sell__min"
+            ]
+            if not rate:
+                form = CurrencyExchangeForm()
+                error = f"На даний момент в цю валюту конвертувати не можливо"
+                return render(
+                    request,
+                    "currency_exchange_calculator.html",
+                    {"error": error, "rates": rates, "form": form},
+                )
+            result = round(float(suma / rate), 2)
+            return render(
+                request,
+                "currency_exchange_calculator.html",
+                {
+                    "form": form,
+                    "rates": rates,
+                    "result": result,
+                    "suma": suma,
+                    "currency_sell": currency_sell,
+                    "currency_buy": currency_buy,
+                },
+            )
+        if currency_buy == "UAH":
+            rate = rates.filter(currency_from=currency_sell).aggregate(Max("buy"))[
+                "buy__max"
+            ]
+            if not rate:
+                form = CurrencyExchangeForm()
+                error = f"На даний момент з цієї валюти конвертувати не можливо"
+                return render(
+                    request,
+                    "currency_exchange_calculator.html",
+                    {"error": error, "rates": rates, "form": form},
+                )
+            result = round(float(suma * rate), 2)
+            return render(
+                request,
+                "currency_exchange_calculator.html",
+                {
+                    "form": form,
+                    "rates": rates,
+                    "result": result,
+                    "suma": suma,
+                    "currency_sell": currency_sell,
+                    "currency_buy": currency_buy,
+                },
+            )
