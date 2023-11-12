@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Калькулятор обмена валют</title>
+</head>
+<body>
+    <h1>Калькулятор обмена валют</h1>
+
+    <form method="post" action="{% url 'exchange_result' %}">
+        {% csrf_token %}
+
+        <label for="from_currency">Обменять из:</label>
+        <select name="from_currency" required>
+            {% for currency, rate in best_rates.items %}
+                <option value="{{ currency }}">{{ currency }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="amount">Сумма:</label>
+        <input type="number" name="amount" required>
+
+        <button type="submit">Рассчитать</button>
+    </form>
+</body>
+</html>
