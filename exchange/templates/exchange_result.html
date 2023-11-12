@@ -1,11 +1,6 @@
-<!-- Ваш_проект/ваше_приложение/templates/exchange_result.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Результат обмена валюты</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     <h1>Результат обмена валюты</h1>
     <p>Вы получите {{ result }} {{ currency }}</p>
-</body>
-</html>
+{% endblock %}
