@@ -43,15 +43,15 @@ class MonoProvider(ProviderBase):
         currency_from_code = self.iso_from_country_code[self.currency_from]
         currency_to_code = self.iso_from_country_code[self.currency_to]
 
-        # for currency in response.json():
-        #     if (
-        #         currency["currencyCodeA"] == currency_from_code
-        #         and currency["currencyCodeB"] == currency_to_code
-        #     ):
-        #         value = SellBuy(
-        #             sell=float(currency["rateSell"]), buy=float(currency["rateBuy"])
-        #         )
-        #         return value
+        for currency in response.json():
+            if (
+                currency["currencyCodeA"] == currency_from_code
+                and currency["currencyCodeB"] == currency_to_code
+            ):
+                value = SellBuy(
+                    sell=float(currency["rateSell"]), buy=float(currency["rateBuy"])
+                )
+                return value
         raise RateNotFound(
             f"Cannot find rate from {self.currency_from} to {self.currency_to} in provider {self.name}"
         )
