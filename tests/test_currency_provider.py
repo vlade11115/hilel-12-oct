@@ -16,14 +16,17 @@ def test_mono_currency_provider():
 
 @responses.activate
 def test_mono_with_data():
-    responses.get("https://api.monobank.ua/bank/currency", json=[
-        {
-            "currencyCodeA": 840,
-            "currencyCodeB": 980,
-            "rateBuy": 28.0,
-            "rateSell": 28.0,
-        }
-    ])
+    responses.get(
+        "https://api.monobank.ua/bank/currency",
+        json=[
+            {
+                "currencyCodeA": 840,
+                "currencyCodeB": 980,
+                "rateBuy": 28.0,
+                "rateSell": 28.0,
+            }
+        ],
+    )
     provider = MonoProvider("USD", "UAH")
     rate = provider.get_rate()
     assert rate == SellBuy(sell=28.0, buy=28.0)
