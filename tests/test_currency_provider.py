@@ -65,6 +65,40 @@ def test_nbu_currency_provider():
     rate_mocked_eur.assert_called()
 
 
+def test_vkurse_currency_provider():
+    provider_usd = VkurseProvider("USD", "UAH")
+    provider_eur = VkurseProvider("EUR", "UAH")
+    rate_mocked_usd = MagicMock(return_value=SellBuy(sell=29.0, buy=29.0))
+    rate_mocked_eur = MagicMock(return_value=SellBuy(sell=30.5, buy=30.5))
+
+    provider_usd.get_rate = rate_mocked_usd
+    provider_eur.get_rate = rate_mocked_eur
+    rate_usd = provider_usd.get_rate()
+    rate_eur = provider_eur.get_rate()
+
+    assert rate_usd == SellBuy(sell=29.0, buy=29.0)
+    assert rate_eur == SellBuy(sell=30.5, buy=30.5)
+    rate_mocked_usd.assert_called()
+    rate_mocked_eur.assert_called()
+
+
+def test_minfin_currency_provider():
+    provider_usd = MinfinProvider("USD", "UAH")
+    provider_eur = MinfinProvider("EUR", "UAH")
+    rate_mocked_usd = MagicMock(return_value=SellBuy(sell=29.5, buy=29.5))
+    rate_mocked_eur = MagicMock(return_value=SellBuy(sell=31.5, buy=31.5))
+
+    provider_usd.get_rate = rate_mocked_usd
+    provider_eur.get_rate = rate_mocked_eur
+    rate_usd = provider_usd.get_rate()
+    rate_eur = provider_eur.get_rate()
+
+    assert rate_usd == SellBuy(sell=29.5, buy=29.5)
+    assert rate_eur == SellBuy(sell=31.5, buy=31.5)
+    rate_mocked_usd.assert_called()
+    rate_mocked_eur.assert_called()
+
+
 """ Tests with responses"""
 
 
@@ -95,6 +129,7 @@ def test_mono_with_data():
 
     assert rate_usd == SellBuy(sell=28.0, buy=28.0)
     assert rate_eur == SellBuy(sell=40.8, buy=39.42)
+    assert rate_usd and rate_eur != []
 
 
 @responses.activate
@@ -119,6 +154,7 @@ def test_privatbank_with_data():
 
     assert rate_usd == SellBuy(sell=37.5, buy=37.0)
     assert rate_eur == SellBuy(sell=41.05, buy=40.05)
+    assert rate_usd and rate_eur != []
 
 
 @responses.activate
@@ -144,6 +180,7 @@ def test_nbu_with_data():
 
     assert rate_usd == SellBuy(sell=36.04, buy=36.04)
     assert rate_eur == SellBuy(sell=39.39, buy=39.39)
+    assert rate_usd and rate_eur != []
 
 
 @responses.activate
@@ -163,6 +200,7 @@ def test_vkurse_with_data():
 
     assert rate_usd == SellBuy(sell=37.90, buy=37.65)
     assert rate_eur == SellBuy(sell=41.10, buy=40.90)
+    assert rate_usd and rate_eur != {}
 
 
 @responses.activate
@@ -200,3 +238,4 @@ def test_minfin_with_data():
 
     assert rate_usd == SellBuy(sell=37.8, buy=37.35)
     assert rate_eur == SellBuy(sell=41.05, buy=40.4)
+    assert rate_usd and rate_eur != {}
