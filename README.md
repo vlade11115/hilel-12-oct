@@ -28,8 +28,6 @@ Windows
 celery -A hilel12 worker -l INFO -P eventlet
 ```
 
-
-
 Run server:
 ```angular2html
 python manage.py runserver
