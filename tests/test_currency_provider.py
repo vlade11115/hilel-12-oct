@@ -31,10 +31,20 @@ def test_mono_with_data():
                 "currencyCodeB": 980,
                 "rateBuy": 31.0,
                 "rateSell": 31.0,
+            },
+            {
+                "currencyCodeA": 978,
+                "currencyCodeB": 980,
+                "rateBuy": 31.0,
+                "rateSell": 31.0,
             }
         ],
     )
     provider = MonoProvider("USD", "UAH")
+    rate = provider.get_rate()
+    assert rate == SellBuy(sell=31.0, buy=31.0)
+
+    provider = MonoProvider("EUR", "UAH")
     rate = provider.get_rate()
     assert rate == SellBuy(sell=31.0, buy=31.0)
 
@@ -56,20 +66,24 @@ def test_privatbank_with_data():
             {
                 "ccy": "EUR",
                 "base_ccy": "UAH",
-                "buy": 31.0,
-                "sale": 31.0,
+                "buy": 32.5,
+                "sale": 32.0,
             },
             {
                 "ccy": "USD",
                 "base_ccy": "UAH",
-                "buy": 31.0,
+                "buy": 31.5,
                 "sale": 31.0,
             },
         ],
     )
     provider = PrivatbankProvider("USD", "UAH")
     rate = provider.get_rate()
-    assert rate == SellBuy(sell=31.0, buy=31.0)
+    assert rate == SellBuy(sell=31.0, buy=31.5)
+
+    provider = PrivatbankProvider("EUR", "UAH")
+    rate = provider.get_rate()
+    assert rate == SellBuy(sell=32.0, buy=32.5)
 
 
 def test_vkurse_currency_provider():
@@ -86,13 +100,17 @@ def test_vkurse_with_data():
     responses.get(
         "https://vkurse.dp.ua/course.json",
         json={
-            "Dollar": {"buy": "31.0", "sale": "31.0"},
-            "Euro": {"buy": "31.0", "sale": "31.0"},
+            "Dollar": {"buy": "31.5", "sale": "31.0"},
+            "Euro": {"buy": "32.5", "sale": "32.0"},
         },
     )
     provider = VkurseProvider("USD", "UAH")
     rate = provider.get_rate()
-    assert rate == SellBuy(sell=31.0, buy=31.0)
+    assert rate == SellBuy(sell=31.0, buy=31.5)
+
+    provider = VkurseProvider("EUR", "UAH")
+    rate = provider.get_rate()
+    assert rate == SellBuy(sell=32.0, buy=32.5)
 
 
 def test_nbu_currency_provider():
@@ -123,6 +141,10 @@ def test_nbu_with_data():
     rate = provider.get_rate()
     assert rate == SellBuy(sell=31.0, buy=31.0)
 
+    provider = NBUProvider("EUR", "UAH")
+    rate = provider.get_rate()
+    assert rate == SellBuy(sell=31.0, buy=31.0)
+
 
 def test_minfin_currency_provider():
     provider = MinfinProvider("USD", "UAH")
@@ -140,16 +162,20 @@ def test_minfin_with_data():
         json=[
             {
                 "currency": "usd",
-                "ask": 31.0,
+                "ask": 32.0,
                 "bid": 31.0,
             },
             {
                 "currency": "eur",
-                "ask": 31.0,
-                "bid": 31.0,
+                "ask": 32.5,
+                "bid": 31.5,
             },
         ],
     )
     provider = MinfinProvider("USD", "UAH")
     rate = provider.get_rate()
-    assert rate == SellBuy(sell=31.0, buy=31.0)
+    assert rate == SellBuy(sell=31.0, buy=32.0)
+
+    provider = MinfinProvider("EUR", "UAH")
+    rate = provider.get_rate()
+    assert rate == SellBuy(sell=31.5, buy=32.5)
