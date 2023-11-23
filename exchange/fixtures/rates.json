@@ -1,0 +1,74 @@
+[
+  {
+    "model": "exchange.Rate",
+    "pk": 1,
+    "fields": {
+      "currency_from": "USD",
+      "currency_to": "UAH",
+      "sell": 31.09,
+      "buy": 32.51,
+      "provider": "mono",
+      "date": "2022-12-03"
+    }
+  },
+  {
+    "model": "exchange.Rate",
+    "pk": 2,
+    "fields": {
+      "currency_from": "EUR",
+      "currency_to": "UAH",
+      "sell": 39.31,
+      "buy": 40.53,
+      "provider": "mono",
+      "date": "2023-11-11"
+    }
+  },
+    {
+    "model": "exchange.Rate",
+    "pk": 3,
+    "fields": {
+      "currency_from": "USD",
+      "currency_to": "UAH",
+      "sell": 38.91,
+      "buy": 40.53,
+      "provider": "privatbank",
+      "date": "2021-09-10"
+    }
+  },
+    {
+    "model": "exchange.Rate",
+    "pk": 4,
+    "fields": {
+      "currency_from": "EUR",
+      "currency_to": "UAH",
+      "sell": 39.31,
+      "buy": 40.53,
+      "provider": "vkurse",
+      "date": "2021-09-15"
+    }
+  },
+      {
+    "model": "exchange.Rate",
+    "pk": 5,
+    "fields": {
+      "currency_from": "USD",
+      "currency_to": "UAH",
+      "sell": 39.31,
+      "buy": 40.53,
+      "provider": "nbu",
+      "date": "2023-07-03"
+    }
+  },
+        {
+    "model": "exchange.Rate",
+    "pk": 6,
+    "fields": {
+      "currency_from": "USD",
+      "currency_to": "UAH",
+      "sell": 39.31,
+      "buy": 40.53,
+      "provider": "minfin",
+      "date": "2021-09-10"
+    }
+  }
+]
