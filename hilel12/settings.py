@@ -75,16 +75,24 @@ try:
     POSTGRES_PASSWORD = open(os.getenv("POSTGRES_PASSWORD_FILE", "")).read().strip()
 except FileNotFoundError:
     POSTGRES_PASSWORD = "for_tests"
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "mock-db"),
-        "USER": "postgres",
-        "PASSWORD": POSTGRES_PASSWORD,
-        "HOST": "db" if os.getenv("DOCKERIZED", False) else "localhost",
-        "PORT": "5432",
+if os.getenv("DOCKERIZED", False):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB", "mock-db"),
+            "USER": "postgres",
+            "PASSWORD": POSTGRES_PASSWORD,
+            "HOST": "db",
+            "PORT": "5432",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
