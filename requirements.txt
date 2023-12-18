@@ -42,3 +42,5 @@ urllib3==2.0.7
 vine==5.0.0
 wcwidth==0.2.8
 yarl==1.9.2
+gunicorn
+psycopg2-binary

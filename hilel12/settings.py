@@ -71,11 +71,18 @@ WSGI_APPLICATION = "hilel12.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+try:
+    POSTGRES_PASSWORD = open(os.getenv("POSTGRES_PASSWORD_FILE", "")).read().strip()
+except FileNotFoundError:
+    POSTGRES_PASSWORD = "for_tests"
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "mock-db"),
+        "USER": "postgres",
+        "PASSWORD": POSTGRES_PASSWORD,
+        "HOST": "db" if os.getenv("DOCKERIZED", False) else "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -119,7 +126,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Celery settings
-CELERY_BROKER_URL = "amqp://guest@localhost//"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
